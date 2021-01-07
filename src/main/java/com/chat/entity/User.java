@@ -26,7 +26,7 @@ public class User implements UserDetails {
 
     @Column
     @NotBlank
-    @Size(min = 3, max = 255)
+    @Size(min = 3, max = 20)
     private String username;
 
     @Column

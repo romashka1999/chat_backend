@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "chat.jwtSecret",
+      "type": "java.lang.String",
+      "description": "Description for chat.jwtSecret."
+  }
+] }
