@@ -20,7 +20,6 @@ public class AuthController {
 
     @PostMapping("signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInDto signInDto) throws Exception {
-        System.out.println("helooooooooooooooooooooooooooooo");
         return authService.signIn(signInDto);
     }
 
