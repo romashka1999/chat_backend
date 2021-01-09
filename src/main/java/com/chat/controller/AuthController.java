@@ -5,10 +5,7 @@ import com.chat.dto.SignUpDto;
 import com.chat.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -20,6 +17,7 @@ public class AuthController {
 
     @PostMapping("signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInDto signInDto) throws Exception {
+        System.out.println("ssssssssssssssssssssssssssss");
         return authService.signIn(signInDto);
     }
 
