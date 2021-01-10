@@ -16,14 +16,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
+    private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserService userService;
+
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    UserService userService;
+    public AuthService(
+            AuthenticationManager authenticationManager,
+            CustomUserDetailsService customUserDetailsService,
+            JwtTokenUtil jwtTokenUtil,
+            UserService userService
+    ) {
+        this.authenticationManager = authenticationManager;
+        this.customUserDetailsService = customUserDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userService = userService;
+    }
 
     public ResponseEntity<?> signIn(SignInDto signInDto) {
         Authentication authentication = authenticationManager.authenticate(
@@ -33,8 +42,7 @@ public class AuthService {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(signInDto.getUsername());
         String jwt = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity
-                    .ok(new SignInResponse(jwt));
+        return ResponseEntity.ok(new SignInResponse(jwt));
     }
 
     public ResponseEntity<?> signUp(SignUpDto signUpDto) {

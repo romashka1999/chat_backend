@@ -1,14 +1,12 @@
 package com.chat.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class SignInDto {
     @NotBlank

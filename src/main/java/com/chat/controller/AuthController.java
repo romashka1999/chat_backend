@@ -12,12 +12,15 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("auth")
 public class AuthController {
+    private final AuthService authService;
+
     @Autowired
-    AuthService authService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInDto signInDto) throws Exception {
-        System.out.println("ssssssssssssssssssssssssssss");
         return authService.signIn(signInDto);
     }
 

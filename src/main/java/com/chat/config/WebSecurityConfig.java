@@ -1,5 +1,6 @@
 package com.chat.config;
 
+import com.chat.component.AuthEntryPointJwt;
 import com.chat.filter.AuthFilter;
 import com.chat.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private final CustomUserDetailsService customUserDetailsService;
+    private final AuthFilter authFilter;
+    private final AuthEntryPointJwt authEntryPointJwt;
 
     @Autowired
-    CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    AuthFilter authFilter;
+    public WebSecurityConfig(
+            CustomUserDetailsService customUserDetailsService,
+            AuthFilter authFilter,
+            AuthEntryPointJwt authEntryPointJwt
+    ) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.authFilter = authFilter;
+        this.authEntryPointJwt = authEntryPointJwt;
+    }
 
 
     @Override
@@ -36,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                //.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated();
