@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 public class UserService {
@@ -48,5 +49,18 @@ public class UserService {
             throw new Exception("USER_NOT_FOUND");
         }
         return ResponseEntity.ok(user);
+    }
+
+    public ResponseEntity<?> serachUserByUsername(String username, Authentication authentication) throws Exception {
+        var autehnticatedUsername = authentication.getName();
+        if(autehnticatedUsername.equals(username)) {
+            return ResponseEntity.ok(null);
+        }
+        var searchedUser = userRepository.findByUsernameLike("%" + username + "%");
+        if (searchedUser.isEmpty()) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.ok(searchedUser);
+        }
     }
 }

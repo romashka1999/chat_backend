@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface GroupRepository extends JpaRepository<Group, Long> {
     List<Group> findAllByAdmin_Username(String username);
     Optional<Group> findByAdmin_UsernameAndId(String username, Long id);
+    List<Group> findByTitleLikeAndIsPublicIs(String title, Boolean isPublic);
 }

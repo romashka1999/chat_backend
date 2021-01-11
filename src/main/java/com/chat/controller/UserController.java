@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,8 +19,16 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("me")
+    @GetMapping("/me")
     public ResponseEntity<?> getMyProfileData(Authentication authentication) throws Exception {
         return userService.getMyProfileData(authentication);
+    }
+
+    @GetMapping("/serachUserByUsername/{username}")
+    public ResponseEntity<?> serachUserByUsername(
+            @PathVariable(value = "username") String username,
+            Authentication authentication
+    ) throws Exception {
+        return userService.serachUserByUsername(username, authentication);
     }
 }
