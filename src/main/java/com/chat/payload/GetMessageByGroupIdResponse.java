@@ -1,7 +1,7 @@
 package com.chat.payload;
 
 import com.chat.entity.Message;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

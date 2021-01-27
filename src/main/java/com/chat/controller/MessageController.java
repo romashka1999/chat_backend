@@ -3,9 +3,11 @@ package com.chat.controller;
 import com.chat.dto.SendeMessageToGroupDto;
 import com.chat.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -19,12 +21,13 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @PostMapping("")
+    @PostMapping(value = "", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> sendMessageToGroup(
-            @Valid @RequestBody SendeMessageToGroupDto sendeMessageToGroupDto,
+            @Valid @RequestPart(name = "file", required = false) MultipartFile file,
+            @Valid @RequestPart SendeMessageToGroupDto sendeMessageToGroupDto,
             Authentication authentication
     ) throws Exception {
-        return messageService.sendMessageToGroup(sendeMessageToGroupDto, authentication);
+        return messageService.sendMessageToGroup(sendeMessageToGroupDto, file, authentication);
     }
 
     @GetMapping("/{groupId}")

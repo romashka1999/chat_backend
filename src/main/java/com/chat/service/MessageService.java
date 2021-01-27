@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -21,34 +22,44 @@ import java.util.Date;
 public class MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final FirebaseStorageService firebaseStorageService;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository, UserRepository userRepository) {
+    public MessageService(MessageRepository messageRepository, UserRepository userRepository, FirebaseStorageService firebaseStorageService) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.firebaseStorageService = firebaseStorageService;
     }
 
-    public ResponseEntity<?> sendMessageToGroup(SendeMessageToGroupDto sendeMessageToGroupDto, Authentication authentication) throws Exception {
+    public ResponseEntity<?> sendMessageToGroup(SendeMessageToGroupDto sendeMessageToGroupDto, MultipartFile file, Authentication authentication) throws Exception {
         var username = authentication.getName();
         var currentUser = userRepository.findByUsername(username);
         if(currentUser.isEmpty()) {
             throw new Exception("CURRENT_USER_NOT_FOUND");
         }
 
-        var message = new Message();
-        message.setGroupId(sendeMessageToGroupDto.getGroupId());
-        message.setUserId(sendeMessageToGroupDto.getUserId());
-        message.setDate(new Date());
-        message.setType(sendeMessageToGroupDto.getType());
-        if(sendeMessageToGroupDto.getType() == MessageType.TEXT) {
-            message.setContent(sendeMessageToGroupDto.getContent());
-        } else {
-            // avitanot amazonze da imis misamarti chavuwerot contentshi
-        }
-
-        messageRepository.save(message);
-
-        return ResponseEntity.ok("ola");
+        System.out.println("aqanaaaaaaaaaaa avrr");
+        System.out.println(file);
+        System.out.println(sendeMessageToGroupDto);
+        return ResponseEntity.ok("holaa");
+//        var message = new Message();
+//        message.setGroupId(sendeMessageToGroupDto.getGroupId());
+//        message.setUserId(sendeMessageToGroupDto.getUserId());
+//        message.setDate(new Date());
+//        message.setType(sendeMessageToGroupDto.getType());
+//        if(sendeMessageToGroupDto.getType() == MessageType.TEXT) {
+//            message.setContent(sendeMessageToGroupDto.getContent());
+//        } else {
+//            if(file.isEmpty()) {
+//                throw new Exception("FILE_IS_EMPTY");
+//            }
+//            var fileUrl = this.firebaseStorageService.uploadFile(file);
+//            message.setContent(fileUrl);
+//        }
+//
+//        messageRepository.save(message);
+//
+//        return ResponseEntity.ok("message sent!");
     }
 
     public ResponseEntity<?> getMessagesByGroupId(Long groupId, String pageStr, String pageSizeStr, Authentication authentication) throws Exception {
