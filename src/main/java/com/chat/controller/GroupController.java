@@ -26,17 +26,20 @@ public class GroupController {
             @Valid @RequestBody CreateGroupDto createGroupDto,
             Authentication authentication
     ) throws Exception{
+        System.out.println("createGroup");
         return groupService.createGroup(createGroupDto, authentication);
     }
 
 
     @GetMapping("/getOwnGroups")
     public ResponseEntity<?> getOwnGroups(Authentication authentication) {
+        System.out.println("getOwnGroups");
         return groupService.getOwnGroups(authentication);
     }
 
     @GetMapping("/getAllJoinedGroups")
     public ResponseEntity<?> getAllJoinedGroups(Authentication authentication) {
+        System.out.println("getAllJoinedGroups");
         return groupService.getAllJoinedGroups(authentication);
     }
 

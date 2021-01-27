@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,11 +37,26 @@ public class GroupService {
     public ResponseEntity<?> createGroup(CreateGroupDto createGroupDto, Authentication authentication) throws Exception {
         var authenticatedUser = userRepository.findByUsername(authentication.getName());
 
+        System.out.println(authenticatedUser);
+
         var newGroup = new Group();
         newGroup.setAdmin(authenticatedUser.get());
         newGroup.setTitle(createGroupDto.getTitle());
-        newGroup.setIsPublic(true);
-        groupRepository.save(newGroup);
+        newGroup.setIsPublic(Boolean.TRUE);
+
+        System.out.println(newGroup);
+        var createdGroup = groupRepository.save(newGroup);
+
+        System.out.println(createdGroup);
+
+        var userGroups = new UserGroups();
+        userGroups.setUser(authenticatedUser.get());
+        userGroups.setGroup(createdGroup);
+        userGroups.setDate(new Date());
+        var createdUserGroup = userGroupsRepository.save(userGroups);
+
+        System.out.println(createdUserGroup);
+        System.out.println("------------------------------------------------------aaaaaaaaaaaaaaaaa------");
 
         return ResponseEntity.ok("Group sucessufully created :)");
     }
@@ -56,8 +70,11 @@ public class GroupService {
 
     public ResponseEntity<?> getAllJoinedGroups(Authentication authentication) {
         var username = authentication.getName();
+        System.out.println(username);
 
         var userGroups = this.userGroupsRepository.findAllByUser_Username(username);
+        System.out.println(userGroups);
+
         var groupIds = new ArrayList<Long>();
 
         if (!userGroups.isEmpty()) {
@@ -66,7 +83,12 @@ public class GroupService {
             });
         }
 
+        System.out.println(groupIds);
+
         var groups = this.groupRepository.findAllByIdIn(groupIds);
+        System.out.println(groups);
+
+        System.out.println("------------------------------------------------------------");
         return  ResponseEntity.ok(groups);
     }
 
@@ -90,6 +112,8 @@ public class GroupService {
         userGroups.setGroup(group.get());
         userGroups.setDate(new Date());
         userGroupsRepository.save(userGroups);
+
+        System.out.println(userGroups);
 
         return ResponseEntity.ok("User successfully added to group");
     }
