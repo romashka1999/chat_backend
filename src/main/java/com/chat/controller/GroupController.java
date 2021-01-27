@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("group")
 public class GroupController {
@@ -21,7 +23,7 @@ public class GroupController {
 
     @PostMapping("/createGroup")
     public ResponseEntity<?> createGroup(
-            CreateGroupDto createGroupDto,
+            @Valid @RequestBody CreateGroupDto createGroupDto,
             Authentication authentication
     ) throws Exception{
         return groupService.createGroup(createGroupDto, authentication);
@@ -40,7 +42,7 @@ public class GroupController {
 
     @PostMapping("/addUserToGroup")
     public ResponseEntity<?> addUserToGroup(
-            AddUserToGroupDto addUserToGroupDto,
+            @Valid @RequestBody AddUserToGroupDto addUserToGroupDto,
             Authentication authentication
     ) throws Exception {
         return groupService.addUserToGroup(addUserToGroupDto, authentication);
