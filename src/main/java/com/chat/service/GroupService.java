@@ -54,6 +54,22 @@ public class GroupService {
         return  ResponseEntity.ok(ownGroups);
     }
 
+    public ResponseEntity<?> getAllJoinedGroups(Authentication authentication) {
+        var username = authentication.getName();
+
+        var userGroups = this.userGroupsRepository.findAllByUser_Username(username);
+        var groupIds = new ArrayList<Long>();
+
+        if (!userGroups.isEmpty()) {
+            userGroups.forEach(userGroup -> {
+                groupIds.add(userGroup.getGroup().getId());
+            });
+        }
+
+        var groups = this.groupRepository.findAllByIdIn(groupIds);
+        return  ResponseEntity.ok(groups);
+    }
+
     public ResponseEntity<?> addUserToGroup(AddUserToGroupDto addUserToGroupDto, Authentication authentication) throws Exception {
         var username = authentication.getName();
         var group = groupRepository.findByAdmin_UsernameAndId(username, addUserToGroupDto.getGroupId());

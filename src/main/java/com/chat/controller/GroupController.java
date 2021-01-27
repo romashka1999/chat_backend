@@ -33,6 +33,11 @@ public class GroupController {
         return groupService.getOwnGroups(authentication);
     }
 
+    @GetMapping("/getAllJoinedGroups")
+    public ResponseEntity<?> getAllJoinedGroups(Authentication authentication) {
+        return groupService.getAllJoinedGroups(authentication);
+    }
+
     @PostMapping("/addUserToGroup")
     public ResponseEntity<?> addUserToGroup(
             AddUserToGroupDto addUserToGroupDto,
