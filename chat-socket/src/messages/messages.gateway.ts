@@ -10,13 +10,13 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { MessagesService } from './messages.service';
+import { IMessage } from './message.entity';
 
 @WebSocketGateway(3001, { namespace: '/messages' })
-export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class MessagesGateway
+    implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() wss: any;
 
-    constructor(private readonly messagesService: MessagesService) {}
 
     async handleConnection(client: Socket, ...args: any[]) {
         this.logger.log(`ChatsGateway cient connected: ${client.id}`);
@@ -36,17 +36,12 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
     @SubscribeMessage('joinRoom')
     async handleJoinRoom(
-        @MessageBody() message: { id: number },
+        @MessageBody() message: { userId: number; groupIds: number[] },
         @ConnectedSocket() client: Socket,
     ) {
-        const userId = message.groupId;
-        const chats = await this.groupsService.getUserChats(userId, {
-            page: 0,
-            pageSize: 100,
-        });
-        const chatsArray = chats.map((chat) => chat._id);
-        chatsArray.forEach((chatId) => {
-            client.join(`${chatId}chats`);
+        const { userId, groupIds } = message;
+        groupIds.forEach((groupId) => {
+            client.join(`${groupId}groups`);
         });
     }
 
@@ -55,9 +50,9 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
         @MessageBody() message: { chatId: string; userId: number },
         @ConnectedSocket() client: Socket,
     ): Promise<void> {
-        if (client.in(`${message.chatId}chats`)) {
+        if (client.in(`${message.chatId}groups`)) {
             this.wss
-                .to(`${message.chatId}chats`)
+                .to(`${message.chatId}groups`)
                 .emit('typingToClient', message);
         }
     }
@@ -67,9 +62,9 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
         @MessageBody() message: { chatId: string; userId: number },
         @ConnectedSocket() client: Socket,
     ): Promise<void> {
-        if (client.in(`${message.chatId}chats`)) {
+        if (client.in(`${message.chatId}groups`)) {
             this.wss
-                .to(`${message.chatId}chats`)
+                .to(`${message.chatId}groups`)
                 .emit('stopTypingToClient', message);
         }
     }
@@ -79,9 +74,9 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
         @MessageBody() message: { chatId: string; userId: number },
         @ConnectedSocket() client: Socket,
     ): Promise<void> {
-        if (client.in(`${message.chatId}chats`)) {
+        if (client.in(`${message.chatId}groups`)) {
             this.wss
-                .to(`${message.chatId}chats`)
+                .to(`${message.chatId}groups`)
                 .emit('eraseMessageToClient', message);
         }
     }
@@ -91,14 +86,16 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
         @MessageBody() message: { chatId: string; userId: number },
         @ConnectedSocket() client: Socket,
     ): Promise<void> {
-        if (client.in(`${message.chatId}chats`)) {
+        if (client.in(`${message.chatId}groups`)) {
             this.wss
-                .to(`${message.chatId}chats`)
+                .to(`${message.chatId}groups`)
                 .emit('standOnChatToClient', message);
         }
     }
 
-    public async messageCreated(chatId: string, createdMessage) {
-        this.wss.to(`${chatId}chats`).emit('messageCreated', createdMessage);
+    public async messageCreated(createdMessage: IMessage) {
+        this.wss
+            .to(`${createdMessage.groupId}groups`)
+            .emit('messageCreated', createdMessage);
     }
 }
